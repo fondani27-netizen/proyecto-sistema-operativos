@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador OS - Campus</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">OS</div>
+                <div>
+                    <h2>Simulador OS</h2>
+                    <p>Edición Universitaria</p>
+                </div>
+            </div>
+            <nav>
+                <ul class="nav-list">
+                    <li class="nav-item active" data-target="round-robin">
+                        <span class="icon">⏱️</span> 1. Procesos (RR)
+                    </li>
+                    <li class="nav-item" data-target="page-replacement">
+                        <span class="icon">🧠</span> 2. Memoria (Páginas)
+                    </li>
+                    <li class="nav-item" data-target="disk-scheduling">
+                        <span class="icon">💾</span> 3. Disco (Pistas)
+                    </li>
+                    <li class="nav-item" data-target="comparison">
+                        <span class="icon">📊</span> 4. Comparación
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Versión 1.0.0</p>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="topbar">
+                <h1>Panel de Simulación Interactiva</h1>
+                <div class="user-badge">U</div>
+            </header>
+
+            <div class="modules-container">
+                <!-- Módulo 1: Round Robin -->
+                <section id="round-robin" class="module active">
+                    <div class="module-header">
+                        <h2>Administración de Procesos: Round Robin</h2>
+                        <p>Simula la planificación de CPU en el servidor de inscripción de materias.</p>
+                    </div>
+                    
+                    <div class="card config-card">
+                        <h3>Configuración del Servidor</h3>
+                        <div class="controls-row">
+                            <div class="input-group">
+                                <label for="rr-quantum">Quantum (ms)</label>
+                                <input type="number" id="rr-quantum" value="3" min="1">
+                            </div>
+                            <div class="actions">
+                                <button id="rr-add-process" class="btn btn-secondary">+ Añadir Proceso</button>
+                                <button id="rr-run" class="btn btn-primary">▶ Ejecutar Simulación</button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-wrapper">
+                            <table id="rr-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Proceso</th>
+                                        <th>Llegada (ms)</th>
+                                        <th>Ráfaga (ms)</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>P1 (Inscripción)</td>
+                                        <td><input type="number" value="0" min="0" class="input-sm"></td>
+                                        <td><input type="number" value="5" min="1" class="input-sm"></td>
+                                        <td>-</td>
+                                    </tr>
+                                    <tr>
+                                        <td>P2 (Consulta)</td>
+                                        <td><input type="number" value="1" min="0" class="input-sm"></td>
+                                        <td><input type="number" value="4" min="1" class="input-sm"></td>
+                                        <td>-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card results-card" id="rr-results" style="display: none;">
+                        <h3>Diagrama de Gantt</h3>
+                        <div class="gantt-container" id="rr-gantt"></div>
+                        <div class="stats-grid" id="rr-stats"></div>
+                    </div>
+                </section>
+
+                <!-- Módulo 2: Reemplazo de Página -->
+                <section id="page-replacement" class="module">
+                    <div class="module-header">
+                        <h2>Administración de Memoria: Reemplazo de Página</h2>
+                        <p>Acceso a expedientes académicos en la RAM del servidor.</p>
+                    </div>
+
+                    <div class="card config-card">
+                        <div class="controls-grid">
+                            <div class="input-group">
+                                <label for="pr-frames">Marcos de RAM</label>
+                                <input type="number" id="pr-frames" value="3" min="1" max="10">
+                            </div>
+                            <div class="input-group">
+                                <label for="pr-algo">Algoritmo</label>
+                                <select id="pr-algo" class="select-styled">
+                                    <option value="fifo">FIFO (First In First Out)</option>
+                                    <option value="lru">LRU (Least Recently Used)</option>
+                                    <option value="optimo">Óptimo</option>
+                                    <option value="sc">Segunda Oportunidad</option>
+                                    <option value="lfu">LFU (Least Frequently Used)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-group w-full mt-15">
+                            <label for="pr-refs">Expedientes solicitados (separados por coma)</label>
+                            <input type="text" id="pr-refs" value="7,0,1,2,0,3,0,4,2,3,0,3,2">
+                        </div>
+                        <div class="mt-15">
+                            <button id="pr-run" class="btn btn-primary">▶ Simular Memoria</button>
+                        </div>
+                    </div>
+
+                    <div class="card results-card" id="pr-results" style="display: none;">
+                        <h3>Estado de los Marcos de Página</h3>
+                        <div class="frames-container" id="pr-visualization"></div>
+                        <div class="stats-box" id="pr-stats"></div>
+                    </div>
+                </section>
+
+                <!-- Módulo 3: Planificación de Disco -->
+                <section id="disk-scheduling" class="module">
+                    <div class="module-header">
+                        <h2>Planificación de Disco</h2>
+                        <p>Simula el brazo de lectura del disco accediendo a calificaciones.</p>
+                    </div>
+
+                    <div class="card config-card">
+                        <div class="controls-grid">
+                            <div class="input-group">
+                                <label for="ds-init">Pista Inicial (Cabeza)</label>
+                                <input type="number" id="ds-init" value="50" min="0" max="199">
+                            </div>
+                            <div class="input-group">
+                                <label for="ds-algo">Algoritmo</label>
+                                <select id="ds-algo" class="select-styled">
+                                    <option value="fifo">FIFO / FCFS</option>
+                                    <option value="sstf">SSTF (Shortest Seek Time First)</option>
+                                    <option value="scan">SCAN (Ascensor)</option>
+                                    <option value="cscan">C-SCAN (Circular)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-group w-full mt-15">
+                            <label for="ds-reqs">Cola de Pistas (separadas por coma)</label>
+                            <input type="text" id="ds-reqs" value="98,183,37,122,14,124,65,67">
+                        </div>
+                        <div class="mt-15">
+                            <button id="ds-run" class="btn btn-primary">▶ Trazar Ruta de Disco</button>
+                        </div>
+                    </div>
+
+                    <div class="card results-card" id="ds-results" style="display: none;">
+                        <h3>Ruta del Brazo del Disco</h3>
+                        <div class="disk-chart-container">
+                            <div class="disk-line" id="ds-line"></div>
+                            <div class="disk-points" id="ds-points"></div>
+                        </div>
+                        <div class="stats-box" id="ds-stats"></div>
+                    </div>
+                </section>
+
+                <!-- Módulo 4: Comparación -->
+                <section id="comparison" class="module">
+                    <div class="module-header">
+                        <h2>Comparación y Eficiencia</h2>
+                        <p>Evalúa todos los algoritmos bajo la misma carga del sistema universitario.</p>
+                    </div>
+                    
+                    <div class="card config-card text-center">
+                        <button id="comp-run" class="btn btn-primary btn-lg">⚡ Generar Reporte de Rendimiento</button>
+                    </div>
+
+                    <div class="comparison-grid" id="comp-results" style="display: none;">
+                        <div class="card">
+                            <h3>Fallos de Página (Menos es mejor)</h3>
+                            <div class="bar-chart" id="comp-mem-chart"></div>
+                        </div>
+                        <div class="card">
+                            <h3>Movimiento de Cabeza de Disco</h3>
+                            <div class="bar-chart" id="comp-disk-chart"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
